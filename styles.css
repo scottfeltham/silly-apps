@@ -5,17 +5,25 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    overflow: hidden;
     touch-action: none;
 }
 
 .app-container {
     width: 100vw;
     height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .screen {
@@ -23,8 +31,11 @@ body {
     display: none;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 .screen.active {
@@ -32,9 +43,10 @@ body {
 }
 
 .screen-title {
-    font-size: 36px;
+    font-size: clamp(24px, 5vw, 36px);
     font-weight: bold;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 /* Tab Bar */
@@ -42,7 +54,10 @@ body {
     display: flex;
     background: #f8f8f8;
     border-top: 1px solid #ccc;
-    height: 80px;
+    min-height: 70px;
+    max-height: 80px;
+    flex-shrink: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .tab {
@@ -54,6 +69,7 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     user-select: none;
+    padding: 8px 4px;
 }
 
 .tab:active {
@@ -65,12 +81,12 @@ body {
 }
 
 .tab-icon {
-    font-size: 28px;
+    font-size: clamp(20px, 4vw, 28px);
     margin-bottom: 4px;
 }
 
 .tab-label {
-    font-size: 12px;
+    font-size: clamp(10px, 2vw, 12px);
 }
 
 /* Buttons Screen */
@@ -80,9 +96,10 @@ body {
 }
 
 .counter-display {
-    font-size: 80px;
+    font-size: clamp(50px, 12vw, 80px);
     font-weight: bold;
     margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .buttons-grid {
@@ -90,8 +107,9 @@ body {
     flex-wrap: wrap;
     gap: 15px;
     justify-content: center;
-    max-width: 600px;
+    max-width: min(600px, 90vw);
     margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .fidget-button {
@@ -268,14 +286,15 @@ body {
 }
 
 .reset-btn {
-    margin-top: 20px;
+    margin-top: 15px;
     background: rgba(255,255,255,0.3);
     padding: 12px 30px;
     border: none;
     border-radius: 20px;
     color: white;
-    font-size: 16px;
+    font-size: clamp(14px, 3vw, 16px);
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 /* Spinner Screen */
@@ -286,9 +305,11 @@ body {
 .spinner-selector {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     flex-wrap: wrap;
     justify-content: center;
+    max-width: 90vw;
+    flex-shrink: 0;
 }
 
 .spinner-type-btn {
@@ -300,6 +321,8 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
+    font-size: clamp(12px, 2.5vw, 14px);
+    white-space: nowrap;
 }
 
 .spinner-type-btn:hover {
@@ -315,8 +338,10 @@ body {
 
 .spinner-container {
     position: relative;
-    width: 250px;
-    height: 250px;
+    width: min(250px, 60vw);
+    height: min(250px, 60vw);
+    flex-shrink: 0;
+    margin: 20px 0;
 }
 
 .spinner {
@@ -528,7 +553,8 @@ body {
 
 .sliders-container {
     width: 100%;
-    max-width: 400px;
+    max-width: min(400px, 90vw);
+    flex-shrink: 0;
 }
 
 .slider-row {
@@ -596,14 +622,18 @@ body {
 
 .pop-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(45px, 50px));
     gap: 10px;
-    max-width: 400px;
+    max-width: min(400px, 90vw);
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .pop-bubble {
-    width: 50px;
-    height: 50px;
+    width: 100%;
+    aspect-ratio: 1;
+    min-width: 45px;
+    max-width: 50px;
     border-radius: 50%;
     background: rgba(255,255,255,0.3);
     border: 3px solid rgba(255,255,255,0.6);
@@ -637,20 +667,23 @@ body {
 
 .color-picker {
     display: flex;
-    gap: 15px;
-    padding: 20px;
+    gap: clamp(10px, 2vw, 15px);
+    padding: 15px;
     background: white;
     border-bottom: 1px solid #ddd;
     align-items: center;
+    flex-wrap: wrap;
+    flex-shrink: 0;
 }
 
 .color-option {
-    width: 40px;
-    height: 40px;
+    width: clamp(35px, 8vw, 40px);
+    height: clamp(35px, 8vw, 40px);
     border-radius: 50%;
     cursor: pointer;
     border: 3px solid transparent;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .color-option.selected {

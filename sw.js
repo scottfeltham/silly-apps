@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fidget-fun-v2';
+const CACHE_NAME = 'fidget-fun-v3';
 const BASE_PATH = '/silly-apps'; // Change this if your repo name is different
 const urlsToCache = [
   `${BASE_PATH}/`,
