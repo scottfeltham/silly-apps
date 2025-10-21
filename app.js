@@ -297,10 +297,10 @@ const spinnerDesigns = {
         friction = 0.98;
         spinnerInfo.textContent = 'The original!';
         return `
-            <div class="spinner-arm"></div>
-            <div class="spinner-arm"></div>
-            <div class="spinner-arm"></div>
-            <div class="spinner-center"></div>
+            <div class="arm"></div>
+            <div class="arm"></div>
+            <div class="arm"></div>
+            <div class="center"></div>
         `;
     },
     galaxy: () => {
@@ -308,59 +308,54 @@ const spinnerDesigns = {
         spinnerInfo.textContent = 'Smooth like space!';
         let html = '';
         // Create orbits
-        [80, 130, 180].forEach(size => {
-            html += `<div class="orbit" style="width: ${size}px; height: ${size}px;"></div>`;
-        });
-        // Create stars
-        for (let i = 0; i < 12; i++) {
-            const angle = (i * 30) * Math.PI / 180;
-            const distance = 60 + Math.random() * 60;
-            const x = 125 + Math.cos(angle) * distance;
-            const y = 125 + Math.sin(angle) * distance;
-            html += `<div class="star" style="left: ${x}px; top: ${y}px;"></div>`;
-        }
-        // Create planets
-        [70, 100, 115].forEach((angle, i) => {
-            const rad = angle * Math.PI / 180;
-            const dist = [80, 130, 180][i] / 2;
-            const x = 125 + Math.cos(rad) * dist;
-            const y = 125 + Math.sin(rad) * dist;
-            const size = [15, 20, 12][i];
-            html += `<div class="planet" style="left: ${x-size/2}px; top: ${y-size/2}px; width: ${size}px; height: ${size}px;"></div>`;
-        });
+        html += '<div class="orbit" style="width: 80px; height: 80px;"></div>';
+        html += '<div class="orbit" style="width: 130px; height: 130px;"></div>';
+        html += '<div class="orbit" style="width: 180px; height: 180px;"></div>';
+        // Create stars at fixed positions for consistency
+        html += '<div class="star" style="left: 50px; top: 30px;"></div>';
+        html += '<div class="star" style="left: 150px; top: 50px;"></div>';
+        html += '<div class="star" style="left: 200px; top: 150px;"></div>';
+        html += '<div class="star" style="left: 80px; top: 180px;"></div>';
+        html += '<div class="star" style="left: 30px; top: 120px;"></div>';
+        // Create planets on orbits
+        html += '<div class="planet" style="left: 85px; top: 75px; width: 15px; height: 15px;"></div>';
+        html += '<div class="planet" style="left: 155px; top: 105px; width: 20px; height: 20px;"></div>';
+        html += '<div class="planet" style="left: 200px; top: 115px; width: 12px; height: 12px;"></div>';
+        // Add center star
+        html += '<div class="center-star"></div>';
         return html;
     },
     ninja: () => {
         friction = 0.96;
         spinnerInfo.textContent = 'Fast and sharp!';
-        let html = '';
-        for (let i = 0; i < 4; i++) {
-            html += `<div class="blade" style="transform: translate(0, -50%) rotate(${i * 90}deg);"></div>`;
-        }
-        html += '<div class="center-hole"></div>';
-        return html;
+        return `
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="center-hole"></div>
+        `;
     },
     flower: () => {
         friction = 0.985;
         spinnerInfo.textContent = 'Pretty petals!';
         let html = '';
         for (let i = 0; i < 8; i++) {
-            const rotation = (i * 45);
-            html += `<div class="petal" style="transform: translate(-30px, -80px) rotate(${rotation}deg);"></div>`;
+            html += '<div class="petal"></div>';
         }
         html += '<div class="center-circle"></div>';
         return html;
     },
-    gear: () => {
-        friction = 0.95;
-        spinnerInfo.textContent = 'Mechanical power!';
-        let html = '';
-        for (let i = 0; i < 12; i++) {
-            const rotation = (i * 30);
-            html += `<div class="gear-tooth" style="transform: translate(-15px, -125px) rotate(${rotation}deg);"></div>`;
-        }
-        html += '<div class="gear-center"><div class="gear-hole"></div></div>';
-        return html;
+    spectrum: () => {
+        friction = 0.99;
+        spinnerInfo.textContent = 'All the colors!';
+        return `
+            <div class="prism-ring"></div>
+            <div class="prism-ring"></div>
+            <div class="prism-ring"></div>
+            <div class="prism-ring"></div>
+            <div class="rainbow-center"></div>
+        `;
     }
 };
 
@@ -557,6 +552,7 @@ function resizeCanvas() {
     const container = canvas.parentElement;
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
+    console.log('Canvas resized to:', canvas.width, 'x', canvas.height);
 }
 
 colorOptions.forEach(option => {
@@ -578,13 +574,26 @@ clearBtn.addEventListener('click', () => {
 });
 
 function startDrawing(e) {
+    console.log('startDrawing called', e.type);
+    e.preventDefault(); // Prevent scrolling/touch interference
     isDrawing = true;
     const rect = canvas.getBoundingClientRect();
     const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
     const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    console.log('Drawing at:', x, y, 'Canvas size:', canvas.width, canvas.height);
+
     ctx.beginPath();
     ctx.moveTo(x, y);
-    
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+
+    // Draw a dot at the starting point
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+
     // Light haptic when starting to draw
     haptics.light();
 }
@@ -607,13 +616,19 @@ function stopDrawing() {
     isDrawing = false;
 }
 
+console.log('Canvas element:', canvas);
+console.log('Canvas exists?', !!canvas);
+console.log('Attaching event listeners to canvas...');
+
 canvas.addEventListener('mousedown', startDrawing);
-canvas.addEventListener('touchstart', startDrawing);
+canvas.addEventListener('touchstart', startDrawing, { passive: false });
 canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('touchmove', draw);
+canvas.addEventListener('touchmove', draw, { passive: false });
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('touchend', stopDrawing);
 canvas.addEventListener('mouseleave', stopDrawing);
+
+console.log('Event listeners attached');
 
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fidget-fun-v6';
+const CACHE_NAME = 'fidget-fun-v9';
 const BASE_PATH = '/silly-apps'; // Change this if your repo name is different
 const urlsToCache = [
   `${BASE_PATH}/`,
@@ -6,6 +6,8 @@ const urlsToCache = [
   `${BASE_PATH}/styles.css`,
   `${BASE_PATH}/app.js`,
   `${BASE_PATH}/manifest.json`,
+  `${BASE_PATH}/icon-192.png`,
+  `${BASE_PATH}/icon-512.png`,
   'https://unpkg.com/lucide@latest/dist/umd/lucide.min.js'
 ];
 
