@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Icons</title>
+</head>
+<body>
+    <h1>Icon Generator for Fidget Fun</h1>
+    <p>Use this page to generate the app icons. Right-click each canvas and save as PNG.</p>
+    
+    <h2>192x192 Icon</h2>
+    <canvas id="icon192" width="192" height="192"></canvas>
+    
+    <h2>512x512 Icon</h2>
+    <canvas id="icon512" width="512" height="512"></canvas>
+    
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(0.5, '#764ba2');
+            gradient.addColorStop(1, '#f5576c');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw fidget spinner
+            ctx.save();
+            ctx.translate(size / 2, size / 2);
+            
+            // Spinner arms
+            ctx.fillStyle = 'white';
+            for (let i = 0; i < 3; i++) {
+                ctx.save();
+                ctx.rotate((i * 120) * Math.PI / 180);
+                
+                // Rounded rectangle for arm
+                const armLength = size * 0.35;
+                const armWidth = size * 0.08;
+                ctx.beginPath();
+                ctx.roundRect(0, -armWidth/2, armLength, armWidth, armWidth/2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // Center circle
+            ctx.beginPath();
+            ctx.arc(0, 0, size * 0.12, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            
+            // Inner circle
+            ctx.beginPath();
+            ctx.arc(0, 0, size * 0.06, 0, Math.PI * 2);
+            ctx.fillStyle = '#667eea';
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        // Generate both icons
+        drawIcon(document.getElementById('icon192'), 192);
+        drawIcon(document.getElementById('icon512'), 512);
+        
+        // Auto-download (optional)
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // Uncomment to auto-download:
+        // setTimeout(() => {
+        //     downloadCanvas('icon192', 'icon-192.png');
+        //     downloadCanvas('icon512', 'icon-512.png');
+        // }, 100);
+    </script>
+    
+    <div style="margin-top: 20px;">
+        <button onclick="downloadCanvas('icon192', 'icon-192.png')">Download 192x192</button>
+        <button onclick="downloadCanvas('icon512', 'icon-512.png')">Download 512x512</button>
+    </div>
+    
+    <h3>Instructions:</h3>
+    <ol>
+        <li>Click the download buttons above to save the icons</li>
+        <li>Place icon-192.png and icon-512.png in the silly-apps folder</li>
+        <li>Or right-click each canvas and "Save Image As..."</li>
+    </ol>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="A fun collection of fidget toys and interactive games">
+    <meta name="author" content="Silly Apps">
+    <title>Fidget Fun - Interactive Fidget Toys</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fidget Fun">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Buttons Screen -->
+        <div id="buttons-screen" class="screen active">
+            <h1 class="screen-title">Tap & Toggle</h1>
+            <div class="counter-display" id="counter">0</div>
+            <div class="buttons-grid" id="buttonsGrid"></div>
+            <button class="reset-btn" id="resetButton">Reset</button>
+            <button class="reset-btn" id="randomizeButton" style="background: rgba(255,255,255,0.5);">Randomize</button>
+        </div>
+
+        <!-- Spinner Screen -->
+        <div id="spinner-screen" class="screen">
+            <h1 class="screen-title" style="color: white;">Swipe to Spin</h1>
+            <div class="spinner-container">
+                <div class="spinner" id="spinner">
+                    <div class="spinner-arm"></div>
+                    <div class="spinner-arm"></div>
+                    <div class="spinner-arm"></div>
+                    <div class="spinner-center"></div>
+                </div>
+            </div>
+            <div class="speed-display">Speed: <span id="spinSpeed">0</span></div>
+        </div>
+
+        <!-- Sliders Screen -->
+        <div id="sliders-screen" class="screen">
+            <h1 class="screen-title" style="color: white;">Slide Away</h1>
+            <div class="sliders-container">
+                <div class="slider-row">
+                    <div class="slider-label">
+                        <span>Red</span>
+                        <span id="redValue">50</span>
+                    </div>
+                    <input type="range" class="slider" id="redSlider" min="0" max="100" value="50">
+                </div>
+                <div class="slider-row">
+                    <div class="slider-label">
+                        <span>Green</span>
+                        <span id="greenValue">50</span>
+                    </div>
+                    <input type="range" class="slider" id="greenSlider" min="0" max="100" value="50">
+                </div>
+                <div class="slider-row">
+                    <div class="slider-label">
+                        <span>Blue</span>
+                        <span id="blueValue">50</span>
+                    </div>
+                    <input type="range" class="slider" id="blueSlider" min="0" max="100" value="50">
+                </div>
+            </div>
+            <div class="color-preview" id="colorPreview"></div>
+        </div>
+
+        <!-- Pop It Screen -->
+        <div id="popit-screen" class="screen">
+            <h1 class="screen-title" style="color: white;">Pop It!</h1>
+            <div class="pop-count">Popped: <span id="popCount">0</span></div>
+            <div class="pop-grid" id="popGrid"></div>
+            <button class="pop-reset" id="popReset">Reset All</button>
+        </div>
+
+        <!-- Drawing Screen -->
+        <div id="drawing-screen" class="screen">
+            <div class="color-picker">
+                <div class="color-option selected" data-color="#000000" style="background: #000000;"></div>
+                <div class="color-option" data-color="#FF0000" style="background: #FF0000;"></div>
+                <div class="color-option" data-color="#0000FF" style="background: #0000FF;"></div>
+                <div class="color-option" data-color="#00FF00" style="background: #00FF00;"></div>
+                <div class="color-option" data-color="#FF00FF" style="background: #FF00FF;"></div>
+                <div class="color-option" data-color="#FFA500" style="background: #FFA500;"></div>
+                <div class="color-option" data-color="#FF69B4" style="background: #FF69B4;"></div>
+                <button class="clear-btn" id="clearCanvas">Clear</button>
+            </div>
+            <div class="canvas-container">
+                <canvas id="drawCanvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+            <div class="tab active" data-screen="buttons-screen">
+                <div class="tab-icon">●</div>
+                <div class="tab-label">Buttons</div>
+            </div>
+            <div class="tab" data-screen="spinner-screen">
+                <div class="tab-icon">↻</div>
+                <div class="tab-label">Spinner</div>
+            </div>
+            <div class="tab" data-screen="sliders-screen">
+                <div class="tab-icon">≡</div>
+                <div class="tab-label">Sliders</div>
+            </div>
+            <div class="tab" data-screen="popit-screen">
+                <div class="tab-icon">⊞</div>
+                <div class="tab-label">Pop It</div>
+            </div>
+            <div class="tab" data-screen="drawing-screen">
+                <div class="tab-icon">✎</div>
+                <div class="tab-label">Draw</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registration successful:', registration.scope);
+                    })
+                    .catch((err) => {
+                        console.log('ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
