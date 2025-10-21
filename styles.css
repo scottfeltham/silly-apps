@@ -283,6 +283,36 @@ body {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
+.spinner-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.spinner-type-btn {
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.spinner-type-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+}
+
+.spinner-type-btn.active {
+    background: white;
+    color: #f5576c;
+    border-color: white;
+}
+
 .spinner-container {
     position: relative;
     width: 250px;
@@ -292,19 +322,29 @@ body {
 .spinner {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2, #f5576c);
     position: relative;
     transition: transform 0.05s linear;
     cursor: grab;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .spinner:active {
     cursor: grabbing;
 }
 
-.spinner-arm {
+.spinner-design {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Classic Spinner */
+.spinner-classic {
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f5576c);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.spinner-classic .spinner-arm {
     position: absolute;
     width: 100px;
     height: 20px;
@@ -315,11 +355,11 @@ body {
     transform-origin: 0 50%;
 }
 
-.spinner-arm:nth-child(1) { transform: translate(0, -50%) rotate(0deg); }
-.spinner-arm:nth-child(2) { transform: translate(0, -50%) rotate(120deg); }
-.spinner-arm:nth-child(3) { transform: translate(0, -50%) rotate(240deg); }
+.spinner-classic .spinner-arm:nth-child(1) { transform: translate(0, -50%) rotate(0deg); }
+.spinner-classic .spinner-arm:nth-child(2) { transform: translate(0, -50%) rotate(120deg); }
+.spinner-classic .spinner-arm:nth-child(3) { transform: translate(0, -50%) rotate(240deg); }
 
-.spinner-center {
+.spinner-classic .spinner-center {
     position: absolute;
     width: 60px;
     height: 60px;
@@ -331,11 +371,154 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/* Galaxy Spinner */
+.spinner-galaxy {
+    border-radius: 50%;
+    background: radial-gradient(circle, #4a0080 0%, #1a0033 50%, #000 100%);
+    box-shadow: 0 0 40px rgba(138,43,226,0.6), 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.spinner-galaxy .star {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+
+.spinner-galaxy .orbit {
+    position: absolute;
+    border: 2px solid rgba(138,43,226,0.4);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.spinner-galaxy .planet {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ffeb3b, #ff9800);
+    box-shadow: 0 0 15px rgba(255,152,0,0.6);
+}
+
+/* Ninja Star Spinner */
+.spinner-ninja {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    clip-path: polygon(
+        50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 
+        50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+    );
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.spinner-ninja .blade {
+    position: absolute;
+    width: 80px;
+    height: 8px;
+    background: linear-gradient(90deg, #95a5a6, #ecf0f1, #95a5a6);
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.spinner-ninja .center-hole {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 4px solid #7f8c8d;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* Flower Spinner */
+.spinner-flower {
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffd700 0%, #ffed4e 30%, transparent 30%);
+}
+
+.spinner-flower .petal {
+    position: absolute;
+    width: 60px;
+    height: 80px;
+    background: linear-gradient(to bottom, #ff69b4, #ff1493);
+    border-radius: 50% 50% 50% 0;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 100%;
+    box-shadow: 0 4px 12px rgba(255,20,147,0.3);
+}
+
+.spinner-flower .center-circle {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle, #ffd700, #ffed4e);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 12px rgba(255,215,0,0.5);
+}
+
+/* Gear Spinner */
+.spinner-gear {
+    background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+    position: relative;
+}
+
+.spinner-gear .gear-tooth {
+    position: absolute;
+    width: 30px;
+    height: 40px;
+    background: linear-gradient(to bottom, #95a5a6, #7f8c8d);
+    top: 50%;
+    left: 50%;
+    transform-origin: 50% 125px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.spinner-gear .gear-center {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, #bdc3c7, #95a5a6);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.spinner-gear .gear-hole {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: #34495e;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+}
+
 .speed-display {
-    margin-top: 30px;
+    margin-top: 20px;
     font-size: 24px;
     font-weight: bold;
     color: white;
+}
+
+.spinner-info {
+    margin-top: 10px;
+    font-size: 16px;
+    color: rgba(255,255,255,0.8);
 }
 
 /* Sliders Screen */

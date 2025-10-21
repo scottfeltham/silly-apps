@@ -192,11 +192,115 @@ initializeButtons();
 
 // Spinner Screen
 const spinner = document.getElementById('spinner');
+const spinnerDesign = document.getElementById('spinnerDesign');
 const spinSpeed = document.getElementById('spinSpeed');
+const spinnerInfo = document.getElementById('spinnerInfo');
+const spinnerTypeBtns = document.querySelectorAll('.spinner-type-btn');
+
 let rotation = 0;
 let velocity = 0;
 let lastAngle = 0;
 let isDragging = false;
+let currentSpinnerType = 'classic';
+let friction = 0.98;
+
+// Spinner designs
+const spinnerDesigns = {
+    classic: () => {
+        friction = 0.98;
+        spinnerInfo.textContent = 'The original!';
+        return `
+            <div class="spinner-arm"></div>
+            <div class="spinner-arm"></div>
+            <div class="spinner-arm"></div>
+            <div class="spinner-center"></div>
+        `;
+    },
+    galaxy: () => {
+        friction = 0.99;
+        spinnerInfo.textContent = 'Smooth like space!';
+        let html = '';
+        // Create orbits
+        [80, 130, 180].forEach(size => {
+            html += `<div class="orbit" style="width: ${size}px; height: ${size}px;"></div>`;
+        });
+        // Create stars
+        for (let i = 0; i < 12; i++) {
+            const angle = (i * 30) * Math.PI / 180;
+            const distance = 60 + Math.random() * 60;
+            const x = 125 + Math.cos(angle) * distance;
+            const y = 125 + Math.sin(angle) * distance;
+            html += `<div class="star" style="left: ${x}px; top: ${y}px;"></div>`;
+        }
+        // Create planets
+        [70, 100, 115].forEach((angle, i) => {
+            const rad = angle * Math.PI / 180;
+            const dist = [80, 130, 180][i] / 2;
+            const x = 125 + Math.cos(rad) * dist;
+            const y = 125 + Math.sin(rad) * dist;
+            const size = [15, 20, 12][i];
+            html += `<div class="planet" style="left: ${x-size/2}px; top: ${y-size/2}px; width: ${size}px; height: ${size}px;"></div>`;
+        });
+        return html;
+    },
+    ninja: () => {
+        friction = 0.96;
+        spinnerInfo.textContent = 'Fast and sharp!';
+        let html = '';
+        for (let i = 0; i < 4; i++) {
+            html += `<div class="blade" style="transform: translate(0, -50%) rotate(${i * 90}deg);"></div>`;
+        }
+        html += '<div class="center-hole"></div>';
+        return html;
+    },
+    flower: () => {
+        friction = 0.985;
+        spinnerInfo.textContent = 'Pretty petals!';
+        let html = '';
+        for (let i = 0; i < 8; i++) {
+            const rotation = (i * 45);
+            html += `<div class="petal" style="transform: translate(-30px, -80px) rotate(${rotation}deg);"></div>`;
+        }
+        html += '<div class="center-circle"></div>';
+        return html;
+    },
+    gear: () => {
+        friction = 0.95;
+        spinnerInfo.textContent = 'Mechanical power!';
+        let html = '';
+        for (let i = 0; i < 12; i++) {
+            const rotation = (i * 30);
+            html += `<div class="gear-tooth" style="transform: translate(-15px, -125px) rotate(${rotation}deg);"></div>`;
+        }
+        html += '<div class="gear-center"><div class="gear-hole"></div></div>';
+        return html;
+    }
+};
+
+function setSpinnerType(type) {
+    currentSpinnerType = type;
+    spinnerDesign.innerHTML = spinnerDesigns[type]();
+    spinnerDesign.className = 'spinner-design spinner-' + type;
+    
+    // Reset rotation for new spinner
+    rotation = 0;
+    velocity = 0;
+    spinner.style.transform = 'rotate(0deg)';
+    spinSpeed.textContent = '0';
+}
+
+// Initialize with classic spinner
+setSpinnerType('classic');
+
+// Spinner type button handlers
+spinnerTypeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        spinnerTypeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        setSpinnerType(btn.dataset.type);
+        playSound(1200);
+    });
+});
 
 function getAngle(e, element) {
     const rect = element.getBoundingClientRect();
@@ -245,7 +349,7 @@ setInterval(() => {
     if (!isDragging && Math.abs(velocity) > 0.1) {
         rotation += velocity;
         spinner.style.transform = `rotate(${rotation}deg)`;
-        velocity *= 0.98;
+        velocity *= friction; // Use current spinner's friction
         spinSpeed.textContent = Math.abs(Math.round(velocity));
     }
 }, 16);

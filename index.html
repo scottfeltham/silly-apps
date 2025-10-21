@@ -38,15 +38,23 @@
         <!-- Spinner Screen -->
         <div id="spinner-screen" class="screen">
             <h1 class="screen-title" style="color: white;">Swipe to Spin</h1>
+            
+            <div class="spinner-selector">
+                <button class="spinner-type-btn active" data-type="classic">Classic</button>
+                <button class="spinner-type-btn" data-type="galaxy">Galaxy</button>
+                <button class="spinner-type-btn" data-type="ninja">Ninja</button>
+                <button class="spinner-type-btn" data-type="flower">Flower</button>
+                <button class="spinner-type-btn" data-type="gear">Gear</button>
+            </div>
+            
             <div class="spinner-container">
                 <div class="spinner" id="spinner">
-                    <div class="spinner-arm"></div>
-                    <div class="spinner-arm"></div>
-                    <div class="spinner-arm"></div>
-                    <div class="spinner-center"></div>
+                    <div class="spinner-design" id="spinnerDesign"></div>
                 </div>
             </div>
+            
             <div class="speed-display">Speed: <span id="spinSpeed">0</span></div>
+            <div class="spinner-info" id="spinnerInfo">Drag to spin!</div>
         </div>
 
         <!-- Sliders Screen -->
@@ -138,11 +146,106 @@
                 navigator.serviceWorker.register('/silly-apps/sw.js')
                     .then((registration) => {
                         console.log('ServiceWorker registration successful:', registration.scope);
+                        
+                        // Check for updates every 60 seconds
+                        setInterval(() => {
+                            registration.update();
+                        }, 60000);
+                        
+                        // Listen for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New update available
+                                    showUpdateNotification();
+                                }
+                            });
+                        });
                     })
                     .catch((err) => {
                         console.log('ServiceWorker registration failed:', err);
                     });
             });
+            
+            // Reload when new service worker takes control
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
+            });
+        }
+        
+        function showUpdateNotification() {
+            const notification = document.createElement('div');
+            notification.id = 'update-notification';
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #667eea;
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 25px;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                    animation: slideDown 0.3s ease;
+                ">
+                    <span style="font-weight: bold;">🎉 New update available!</span>
+                    <button onclick="updateApp()" style="
+                        background: white;
+                        color: #667eea;
+                        border: none;
+                        padding: 8px 16px;
+                        border-radius: 15px;
+                        font-weight: bold;
+                        cursor: pointer;
+                    ">Update Now</button>
+                    <button onclick="dismissUpdate()" style="
+                        background: transparent;
+                        color: white;
+                        border: 2px solid white;
+                        padding: 6px 12px;
+                        border-radius: 15px;
+                        cursor: pointer;
+                    ">Later</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Add animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideDown {
+                    from { transform: translate(-50%, -100px); opacity: 0; }
+                    to { transform: translateX(-50%); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        function updateApp() {
+            navigator.serviceWorker.getRegistration().then(registration => {
+                if (registration.waiting) {
+                    // Tell the waiting service worker to skip waiting and become active
+                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                }
+            });
+        }
+        
+        function dismissUpdate() {
+            const notification = document.getElementById('update-notification');
+            if (notification) {
+                notification.remove();
+            }
         }
     </script>
 </body>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fidget-fun-v1';
+const CACHE_NAME = 'fidget-fun-v2';
 const BASE_PATH = '/silly-apps'; // Change this if your repo name is different
 const urlsToCache = [
   `${BASE_PATH}/`,
@@ -20,6 +20,13 @@ self.addEventListener('install', (event) => {
   );
   // Force the waiting service worker to become the active service worker
   self.skipWaiting();
+});
+
+// Listen for SKIP_WAITING message
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Fetch from cache, fallback to network
