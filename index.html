@@ -134,7 +134,8 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                // Change this path if your repo name is different
+                navigator.serviceWorker.register('/silly-apps/sw.js')
                     .then((registration) => {
                         console.log('ServiceWorker registration successful:', registration.scope);
                     })
