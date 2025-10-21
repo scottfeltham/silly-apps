@@ -2,71 +2,270 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Generate Icons</title>
+    <title>Generate Fidget Fun Icons</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 20px 0;
+            background: white;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+        .icon-preview {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+        .icon-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-top: 0;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Icon Generator for Fidget Fun</h1>
-    <p>Use this page to generate the app icons. Right-click each canvas and save as PNG.</p>
-    
-    <h2>192x192 Icon</h2>
-    <canvas id="icon192" width="192" height="192"></canvas>
-    
-    <h2>512x512 Icon</h2>
-    <canvas id="icon512" width="512" height="512"></canvas>
+    <div class="container">
+        <h1>🎮 Fidget Fun Icon Generator</h1>
+        <p>High-quality app icons with a colorful fidget spinner design</p>
+        
+        <div class="icon-preview">
+            <div class="icon-section">
+                <h2>192x192 Icon</h2>
+                <canvas id="icon192" width="192" height="192"></canvas>
+                <br>
+                <button onclick="downloadCanvas('icon192', 'icon-192.png')">Download 192x192</button>
+            </div>
+            
+            <div class="icon-section">
+                <h2>512x512 Icon</h2>
+                <canvas id="icon512" width="512" height="512"></canvas>
+                <br>
+                <button onclick="downloadCanvas('icon512', 'icon-512.png')">Download 512x512</button>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <button onclick="downloadBoth()" style="background: #f5576c; font-size: 18px;">⬇️ Download Both Icons</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>📝 Instructions:</h3>
+            <ol>
+                <li><strong>Click "Download Both Icons"</strong> to save both files</li>
+                <li><strong>Save them</strong> in your <code>~/Projects/silly-apps/</code> folder</li>
+                <li>Files should be named:
+                    <ul>
+                        <li><code>icon-192.png</code></li>
+                        <li><code>icon-512.png</code></li>
+                    </ul>
+                </li>
+                <li><strong>Commit and push</strong> to GitHub</li>
+                <li>Icons will appear when you <strong>"Add to Home Screen"</strong>! 🎉</li>
+            </ol>
+        </div>
+    </div>
     
     <script>
-        function drawIcon(canvas, size) {
+        function drawFidgetIcon(canvas, size) {
             const ctx = canvas.getContext('2d');
+            const center = size / 2;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
             
             // Background gradient
-            const gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#667eea');
-            gradient.addColorStop(0.5, '#764ba2');
-            gradient.addColorStop(1, '#f5576c');
+            const bgGradient = ctx.createLinearGradient(0, 0, size, size);
+            bgGradient.addColorStop(0, '#667eea');
+            bgGradient.addColorStop(0.5, '#764ba2');
+            bgGradient.addColorStop(1, '#f5576c');
             
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = bgGradient;
             ctx.fillRect(0, 0, size, size);
+            
+            // Add subtle pattern overlay
+            ctx.globalAlpha = 0.1;
+            for (let i = 0; i < 50; i++) {
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(
+                    Math.random() * size,
+                    Math.random() * size,
+                    Math.random() * 3,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
             
             // Draw fidget spinner
             ctx.save();
-            ctx.translate(size / 2, size / 2);
+            ctx.translate(center, center);
             
-            // Spinner arms
-            ctx.fillStyle = 'white';
+            // Shadow for depth
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = size * 0.05;
+            ctx.shadowOffsetY = size * 0.02;
+            
+            // Spinner arms with gradient
+            const armLength = size * 0.32;
+            const armWidth = size * 0.08;
+            const armRadius = armWidth / 2;
+            
+            const colors = [
+                { start: '#FFD700', end: '#FFA500' },  // Gold to Orange
+                { start: '#00F2FE', end: '#4FACFE' },  // Cyan to Blue
+                { start: '#FF6B9D', end: '#C44569' }   // Pink to Dark Pink
+            ];
+            
             for (let i = 0; i < 3; i++) {
                 ctx.save();
                 ctx.rotate((i * 120) * Math.PI / 180);
                 
+                // Arm gradient
+                const armGradient = ctx.createLinearGradient(0, 0, armLength, 0);
+                armGradient.addColorStop(0, colors[i].start);
+                armGradient.addColorStop(1, colors[i].end);
+                
+                ctx.fillStyle = armGradient;
+                
                 // Rounded rectangle for arm
-                const armLength = size * 0.35;
-                const armWidth = size * 0.08;
                 ctx.beginPath();
-                ctx.roundRect(0, -armWidth/2, armLength, armWidth, armWidth/2);
+                ctx.moveTo(armRadius, -armRadius);
+                ctx.lineTo(armLength - armRadius, -armRadius);
+                ctx.arcTo(armLength, -armRadius, armLength, 0, armRadius);
+                ctx.lineTo(armLength, armRadius);
+                ctx.arcTo(armLength, armRadius, armLength - armRadius, armRadius, armRadius);
+                ctx.lineTo(armRadius, armRadius);
+                ctx.arcTo(0, armRadius, 0, 0, armRadius);
+                ctx.lineTo(0, -armRadius);
+                ctx.arcTo(0, -armRadius, armRadius, -armRadius, armRadius);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Highlight on arm
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.ellipse(armLength * 0.7, 0, armLength * 0.15, armWidth * 0.25, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // End circle
+                const endGradient = ctx.createRadialGradient(
+                    armLength, 0, 0,
+                    armLength, 0, armWidth * 0.6
+                );
+                endGradient.addColorStop(0, colors[i].end);
+                endGradient.addColorStop(1, colors[i].start);
+                
+                ctx.fillStyle = endGradient;
+                ctx.beginPath();
+                ctx.arc(armLength, 0, armWidth * 0.6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Shine on end circle
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.beginPath();
+                ctx.arc(armLength - armWidth * 0.15, -armWidth * 0.15, armWidth * 0.25, 0, Math.PI * 2);
                 ctx.fill();
                 
                 ctx.restore();
             }
             
-            // Center circle
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            
+            // Center circle with gradient
+            const centerSize = size * 0.15;
+            const centerGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, centerSize);
+            centerGradient.addColorStop(0, '#ffffff');
+            centerGradient.addColorStop(0.7, '#f0f0f0');
+            centerGradient.addColorStop(1, '#d0d0d0');
+            
+            ctx.fillStyle = centerGradient;
             ctx.beginPath();
-            ctx.arc(0, 0, size * 0.12, 0, Math.PI * 2);
-            ctx.fillStyle = 'white';
+            ctx.arc(0, 0, centerSize, 0, Math.PI * 2);
             ctx.fill();
             
-            // Inner circle
-            ctx.beginPath();
-            ctx.arc(0, 0, size * 0.06, 0, Math.PI * 2);
+            // Center circle border
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.lineWidth = size * 0.01;
+            ctx.stroke();
+            
+            // Inner hole
             ctx.fillStyle = '#667eea';
+            ctx.beginPath();
+            ctx.arc(0, 0, centerSize * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Shine on center
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(-centerSize * 0.2, -centerSize * 0.2, centerSize * 0.35, 0, Math.PI * 2);
             ctx.fill();
             
             ctx.restore();
         }
         
         // Generate both icons
-        drawIcon(document.getElementById('icon192'), 192);
-        drawIcon(document.getElementById('icon512'), 512);
+        drawFidgetIcon(document.getElementById('icon192'), 192);
+        drawFidgetIcon(document.getElementById('icon512'), 512);
         
-        // Auto-download (optional)
         function downloadCanvas(canvasId, filename) {
             const canvas = document.getElementById(canvasId);
             const link = document.createElement('a');
@@ -75,23 +274,10 @@
             link.click();
         }
         
-        // Uncomment to auto-download:
-        // setTimeout(() => {
-        //     downloadCanvas('icon192', 'icon-192.png');
-        //     downloadCanvas('icon512', 'icon-512.png');
-        // }, 100);
+        function downloadBoth() {
+            setTimeout(() => downloadCanvas('icon192', 'icon-192.png'), 100);
+            setTimeout(() => downloadCanvas('icon512', 'icon-512.png'), 300);
+        }
     </script>
-    
-    <div style="margin-top: 20px;">
-        <button onclick="downloadCanvas('icon192', 'icon-192.png')">Download 192x192</button>
-        <button onclick="downloadCanvas('icon512', 'icon-512.png')">Download 512x512</button>
-    </div>
-    
-    <h3>Instructions:</h3>
-    <ol>
-        <li>Click the download buttons above to save the icons</li>
-        <li>Place icon-192.png and icon-512.png in the silly-apps folder</li>
-        <li>Or right-click each canvas and "Save Image As..."</li>
-    </ol>
 </body>
 </html>
