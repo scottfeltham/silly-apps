@@ -1,3 +1,77 @@
+// Haptic Feedback Utility
+// Uses the Vibration API for haptic feedback on supported devices
+
+const haptics = {
+    // Check if vibration is supported
+    isSupported: () => {
+        return 'vibrate' in navigator;
+    },
+    
+    // Light tap - for button presses, UI interactions
+    light: () => {
+        if (haptics.isSupported()) {
+            navigator.vibrate(10);
+        }
+    },
+    
+    // Medium impact - for selections, toggles
+    medium: () => {
+        if (haptics.isSupported()) {
+            navigator.vibrate(20);
+        }
+    },
+    
+    // Heavy impact - for important actions, errors
+    heavy: () => {
+        if (haptics.isSupported()) {
+            navigator.vibrate(30);
+        }
+    },
+    
+    // Success pattern - for completions
+    success: () => {
+        if (haptics.isSupported()) {
+            navigator.vibrate([10, 50, 10]);
+        }
+    },
+    
+    // Error pattern - for mistakes
+    error: () => {
+        if (haptics.isSupported()) {
+            navigator.vibrate([30, 50, 30, 50, 30]);
+        }
+    },
+    
+    // Selection - for picking items
+    selection: () => {
+        if (haptics.isSupported()) {
+            navigator.vibrate(15);
+        }
+    },
+    
+    // Double tap
+    doubleTap: () => {
+        if (haptics.isSupported()) {
+            navigator.vibrate([10, 30, 10]);
+        }
+    },
+    
+    // Spinner spin - continuous light vibration
+    spin: (intensity) => {
+        if (haptics.isSupported() && intensity > 5) {
+            const duration = Math.min(Math.floor(intensity / 10), 20);
+            navigator.vibrate(duration);
+        }
+    },
+    
+    // Pop - for pop-it bubbles
+    pop: () => {
+        if (haptics.isSupported()) {
+            navigator.vibrate(8);
+        }
+    }
+};
+
 // Tab Navigation
 const tabs = document.querySelectorAll('.tab');
 const screens = document.querySelectorAll('.screen');
@@ -11,6 +85,9 @@ tabs.forEach(tab => {
         
         tab.classList.add('active');
         document.getElementById(targetScreen).classList.add('active');
+        
+        // Haptic feedback for tab change
+        haptics.selection();
 
         if (targetScreen === 'drawing-screen') {
             resizeCanvas();
@@ -102,6 +179,9 @@ function createRandomButton() {
     button.addEventListener('click', (e) => {
         counterDisplay.textContent = ++counter;
         
+        // Haptic feedback for button press
+        haptics.medium();
+        
         // Add ripple effect
         button.classList.add('ripple');
         setTimeout(() => button.classList.remove('ripple'), 600);
@@ -176,6 +256,9 @@ resetButton.addEventListener('click', () => {
     counterDisplay.textContent = counter;
     counterDisplay.style.animation = 'pulse 0.5s ease';
     setTimeout(() => counterDisplay.style.animation = '', 500);
+    
+    // Haptic feedback for reset
+    haptics.light();
     playSound(600);
 });
 
@@ -185,6 +268,9 @@ randomizeButton.addEventListener('click', () => {
         initializeButtons();
         buttonsGrid.style.animation = '';
     }, 500);
+    
+    // Haptic feedback for randomize
+    haptics.success();
     playSound(1000);
 });
 
@@ -203,6 +289,7 @@ let lastAngle = 0;
 let isDragging = false;
 let currentSpinnerType = 'classic';
 let friction = 0.98;
+let lastHapticTime = 0;
 
 // Spinner designs
 const spinnerDesigns = {
@@ -298,6 +385,9 @@ spinnerTypeBtns.forEach(btn => {
         spinnerTypeBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         setSpinnerType(btn.dataset.type);
+        
+        // Haptic feedback for spinner change
+        haptics.selection();
         playSound(1200);
     });
 });
@@ -317,6 +407,9 @@ spinner.addEventListener('touchstart', startDrag);
 function startDrag(e) {
     isDragging = true;
     lastAngle = getAngle(e, spinner);
+    
+    // Haptic feedback when grabbing spinner
+    haptics.light();
     e.preventDefault();
 }
 
@@ -336,6 +429,13 @@ function drag(e) {
     spinner.style.transform = `rotate(${rotation}deg)`;
     spinSpeed.textContent = Math.abs(Math.round(velocity));
     lastAngle = currentAngle;
+    
+    // Haptic feedback while spinning (throttled)
+    const now = Date.now();
+    if (now - lastHapticTime > 100) {
+        haptics.spin(Math.abs(velocity));
+        lastHapticTime = now;
+    }
 }
 
 document.addEventListener('mouseup', stopDrag);
@@ -349,7 +449,7 @@ setInterval(() => {
     if (!isDragging && Math.abs(velocity) > 0.1) {
         rotation += velocity;
         spinner.style.transform = `rotate(${rotation}deg)`;
-        velocity *= friction; // Use current spinner's friction
+        velocity *= friction;
         spinSpeed.textContent = Math.abs(Math.round(velocity));
     }
 }, 16);
@@ -370,19 +470,40 @@ function updateColor() {
     colorPreview.style.background = `rgb(${r}, ${g}, ${b})`;
 }
 
+let lastSliderHaptic = 0;
+
 redSlider.addEventListener('input', () => {
     redValue.textContent = redSlider.value;
     updateColor();
+    
+    // Throttled haptic feedback for slider
+    const now = Date.now();
+    if (now - lastSliderHaptic > 50) {
+        haptics.light();
+        lastSliderHaptic = now;
+    }
 });
 
 greenSlider.addEventListener('input', () => {
     greenValue.textContent = greenSlider.value;
     updateColor();
+    
+    const now = Date.now();
+    if (now - lastSliderHaptic > 50) {
+        haptics.light();
+        lastSliderHaptic = now;
+    }
 });
 
 blueSlider.addEventListener('input', () => {
     blueValue.textContent = blueSlider.value;
     updateColor();
+    
+    const now = Date.now();
+    if (now - lastSliderHaptic > 50) {
+        haptics.light();
+        lastSliderHaptic = now;
+    }
 });
 
 updateColor();
@@ -401,8 +522,12 @@ for (let i = 0; i < 48; i++) {
         bubble.classList.toggle('popped');
         if (bubble.classList.contains('popped')) {
             poppedBubbles.add(i);
+            // Pop haptic
+            haptics.pop();
         } else {
             poppedBubbles.delete(i);
+            // Un-pop haptic (lighter)
+            haptics.light();
         }
         popCount.textContent = poppedBubbles.size;
         playSound(1000 + Math.random() * 200);
@@ -414,6 +539,9 @@ popReset.addEventListener('click', () => {
     document.querySelectorAll('.pop-bubble').forEach(b => b.classList.remove('popped'));
     poppedBubbles.clear();
     popCount.textContent = 0;
+    
+    // Success haptic for reset
+    haptics.success();
     playSound(600);
 });
 
@@ -436,11 +564,17 @@ colorOptions.forEach(option => {
         colorOptions.forEach(o => o.classList.remove('selected'));
         option.classList.add('selected');
         currentColor = option.dataset.color;
+        
+        // Haptic feedback for color selection
+        haptics.selection();
     });
 });
 
 clearBtn.addEventListener('click', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Haptic feedback for clear
+    haptics.medium();
 });
 
 function startDrawing(e) {
@@ -450,6 +584,9 @@ function startDrawing(e) {
     const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
     ctx.beginPath();
     ctx.moveTo(x, y);
+    
+    // Light haptic when starting to draw
+    haptics.light();
 }
 
 function draw(e) {
