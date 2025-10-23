@@ -2,6 +2,20 @@
 // Uses Capacitor Haptics API for native apps, falls back to Vibration API for web
 
 const haptics = {
+    // Throttling to prevent overwhelming the vibration motor on Android
+    _lastHapticTime: 0,
+    _minHapticInterval: 50, // Minimum 50ms between haptics to prevent motor overload
+
+    // Check if enough time has passed since last haptic
+    _canTriggerHaptic: () => {
+        const now = Date.now();
+        if (now - haptics._lastHapticTime >= haptics._minHapticInterval) {
+            haptics._lastHapticTime = now;
+            return true;
+        }
+        return false;
+    },
+
     // Check if Capacitor Haptics is available
     isCapacitorAvailable: () => {
         return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Haptics;
@@ -14,6 +28,8 @@ const haptics = {
 
     // Light tap - for button presses, UI interactions
     light: async () => {
+        if (!haptics._canTriggerHaptic()) return; // Throttle
+
         if (haptics.isCapacitorAvailable()) {
             try {
                 await Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' });
@@ -27,6 +43,8 @@ const haptics = {
 
     // Medium impact - for selections, toggles
     medium: async () => {
+        if (!haptics._canTriggerHaptic()) return; // Throttle
+
         if (haptics.isCapacitorAvailable()) {
             try {
                 await Capacitor.Plugins.Haptics.impact({ style: 'MEDIUM' });
@@ -125,6 +143,8 @@ const haptics = {
 
     // Pop - for pop-it bubbles
     pop: async () => {
+        if (!haptics._canTriggerHaptic()) return; // Throttle
+
         if (haptics.isCapacitorAvailable()) {
             try {
                 await Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' });
@@ -699,23 +719,44 @@ resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
 // Simple sound effect
+// Reuse AudioContext to prevent Android audio issues with rapid button presses
+let audioContext = null;
+
+function getAudioContext() {
+    if (!audioContext) {
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.log('AudioContext not available');
+        }
+    }
+    return audioContext;
+}
+
 function playSound(frequency = 800) {
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        // Resume context if suspended (required on mobile after user interaction)
+        if (ctx.state === 'suspended') {
+            ctx.resume();
+        }
+
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
         oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
+        gainNode.connect(ctx.destination);
+
         oscillator.frequency.value = frequency;
         oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.1);
+
+        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.1);
     } catch (e) {
         // Silently fail if audio context isn't available
     }
