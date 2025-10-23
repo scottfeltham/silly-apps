@@ -482,34 +482,38 @@ function getAngle(e, element) {
 }
 
 spinner.addEventListener('mousedown', startDrag);
-spinner.addEventListener('touchstart', startDrag);
+spinner.addEventListener('touchstart', startDrag, { passive: false });
 
 function startDrag(e) {
     isDragging = true;
     lastAngle = getAngle(e, spinner);
-    
+
     // Haptic feedback when grabbing spinner
     haptics.light();
     e.preventDefault();
 }
 
 document.addEventListener('mousemove', drag);
-document.addEventListener('touchmove', drag);
+document.addEventListener('touchmove', drag, { passive: false });
 
 function drag(e) {
     if (!isDragging) return;
+
+    // Prevent scrolling on touch devices
+    e.preventDefault();
+
     const currentAngle = getAngle(e, spinner);
     let delta = currentAngle - lastAngle;
-    
+
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;
-    
+
     velocity = delta;
     rotation += delta;
     spinner.style.transform = `rotate(${rotation}deg)`;
     spinSpeed.textContent = Math.abs(Math.round(velocity));
     lastAngle = currentAngle;
-    
+
     // Haptic feedback while spinning (throttled)
     const now = Date.now();
     if (now - lastHapticTime > 100) {
