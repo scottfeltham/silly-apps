@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spinner Preview</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 40px;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 40px;
+        }
+        
+        .spinner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .spinner-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .spinner-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .spinner-container {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .spinner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Classic Spinner */
+        .spinner-classic {
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f5576c);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .spinner-classic .arm {
+            position: absolute;
+            width: 100px;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 50%;
+        }
+        
+        .spinner-classic .arm:nth-child(1) { transform: translate(0, -50%) rotate(0deg); }
+        .spinner-classic .arm:nth-child(2) { transform: translate(0, -50%) rotate(120deg); }
+        .spinner-classic .arm:nth-child(3) { transform: translate(0, -50%) rotate(240deg); }
+        
+        .spinner-classic .center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        /* Galaxy Spinner */
+        .spinner-galaxy {
+            border-radius: 50%;
+            background: radial-gradient(circle, #4a0080 0%, #1a0033 50%, #000 100%);
+            box-shadow: 0 0 40px rgba(138,43,226,0.6);
+        }
+        
+        .spinner-galaxy .star {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+        
+        .spinner-galaxy .center-star {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #fff, #ffeb3b);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 30px rgba(255,235,59,0.8);
+            z-index: 10;
+        }
+        
+        .spinner-galaxy .orbit {
+            position: absolute;
+            border: 2px solid rgba(138,43,226,0.4);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .spinner-galaxy .planet {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffeb3b, #ff9800);
+            box-shadow: 0 0 15px rgba(255,152,0,0.6);
+        }
+        
+        /* Ninja Star */
+        .spinner-ninja {
+            background: transparent;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .spinner-ninja .blade {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        
+        .spinner-ninja .blade:nth-child(1) {
+            border-width: 0 20px 80px 20px;
+            border-color: transparent transparent #7f8c8d transparent;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .spinner-ninja .blade:nth-child(2) {
+            border-width: 20px 0 20px 80px;
+            border-color: transparent transparent transparent #7f8c8d;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .spinner-ninja .blade:nth-child(3) {
+            border-width: 80px 20px 0 20px;
+            border-color: #7f8c8d transparent transparent transparent;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .spinner-ninja .blade:nth-child(4) {
+            border-width: 20px 80px 20px 0;
+            border-color: transparent #7f8c8d transparent transparent;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .spinner-ninja .center-hole {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #2c3e50;
+            border: 4px solid #95a5a6;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        
+        /* Flower Spinner */
+        .spinner-flower {
+            border-radius: 50%;
+            background: transparent;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .spinner-flower .petal {
+            position: absolute;
+            width: 60px;
+            height: 100px;
+            background: linear-gradient(to bottom, #ff69b4, #ff1493);
+            border-radius: 50% 50% 50% 0;
+            top: 50%;
+            left: 50%;
+            transform-origin: 50% 100%;
+            box-shadow: 0 4px 12px rgba(255,20,147,0.3);
+        }
+        
+        .spinner-flower .petal:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); }
+        .spinner-flower .petal:nth-child(2) { transform: translate(-50%, -100%) rotate(45deg); }
+        .spinner-flower .petal:nth-child(3) { transform: translate(-50%, -100%) rotate(90deg); }
+        .spinner-flower .petal:nth-child(4) { transform: translate(-50%, -100%) rotate(135deg); }
+        .spinner-flower .petal:nth-child(5) { transform: translate(-50%, -100%) rotate(180deg); }
+        .spinner-flower .petal:nth-child(6) { transform: translate(-50%, -100%) rotate(225deg); }
+        .spinner-flower .petal:nth-child(7) { transform: translate(-50%, -100%) rotate(270deg); }
+        .spinner-flower .petal:nth-child(8) { transform: translate(-50%, -100%) rotate(315deg); }
+        
+        .spinner-flower .center-circle {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #ffd700, #ffed4e);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 12px rgba(255,215,0,0.5);
+            z-index: 10;
+        }
+        
+        /* Rainbow/Prism Spinner */
+        .spinner-rainbow {
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #ff0000 0deg,
+                #ff7f00 51.43deg,
+                #ffff00 102.86deg,
+                #00ff00 154.29deg,
+                #0000ff 205.71deg,
+                #4b0082 257.14deg,
+                #9400d3 308.57deg,
+                #ff0000 360deg
+            );
+            box-shadow: 0 10px 40px rgba(255,255,255,0.3);
+            position: relative;
+        }
+        
+        .spinner-rainbow .prism-ring {
+            position: absolute;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid rgba(255,255,255,0.5);
+        }
+        
+        .spinner-rainbow .prism-ring:nth-child(1) { width: 60px; height: 60px; }
+        .spinner-rainbow .prism-ring:nth-child(2) { width: 100px; height: 100px; }
+        .spinner-rainbow .prism-ring:nth-child(3) { width: 140px; height: 140px; }
+        .spinner-rainbow .prism-ring:nth-child(4) { width: 180px; height: 180px; }
+        
+        .spinner-rainbow .rainbow-center {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, #ffffff, #f0f0f0);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        
+        .info {
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌀 Spinner Design Preview</h1>
+        
+        <div class="spinner-grid">
+            <!-- Classic -->
+            <div class="spinner-card">
+                <div class="spinner-title">Classic</div>
+                <div class="spinner-container">
+                    <div class="spinner spinner-classic">
+                        <div class="arm"></div>
+                        <div class="arm"></div>
+                        <div class="arm"></div>
+                        <div class="center"></div>
+                    </div>
+                </div>
+                <div class="info">Original 3-arm spinner</div>
+            </div>
+            
+            <!-- Galaxy -->
+            <div class="spinner-card">
+                <div class="spinner-title">Galaxy</div>
+                <div class="spinner-container">
+                    <div class="spinner spinner-galaxy">
+                        <div class="orbit" style="width: 80px; height: 80px;"></div>
+                        <div class="orbit" style="width: 130px; height: 130px;"></div>
+                        <div class="orbit" style="width: 180px; height: 180px;"></div>
+                        <div class="star" style="left: 50px; top: 30px;"></div>
+                        <div class="star" style="left: 150px; top: 50px;"></div>
+                        <div class="star" style="left: 200px; top: 150px;"></div>
+                        <div class="star" style="left: 80px; top: 180px;"></div>
+                        <div class="star" style="left: 30px; top: 120px;"></div>
+                        <div class="planet" style="left: 85px; top: 75px; width: 15px; height: 15px;"></div>
+                        <div class="planet" style="left: 155px; top: 105px; width: 20px; height: 20px;"></div>
+                        <div class="planet" style="left: 200px; top: 115px; width: 12px; height: 12px;"></div>
+                        <div class="center-star"></div>
+                    </div>
+                </div>
+                <div class="info">Space theme with central star</div>
+            </div>
+            
+            <!-- Ninja Star -->
+            <div class="spinner-card">
+                <div class="spinner-title">Ninja Star</div>
+                <div class="spinner-container">
+                    <div class="spinner spinner-ninja">
+                        <div class="blade"></div>
+                        <div class="blade"></div>
+                        <div class="blade"></div>
+                        <div class="blade"></div>
+                        <div class="center-hole"></div>
+                    </div>
+                </div>
+                <div class="info">4-point throwing star</div>
+            </div>
+            
+            <!-- Flower -->
+            <div class="spinner-card">
+                <div class="spinner-title">Flower</div>
+                <div class="spinner-container">
+                    <div class="spinner spinner-flower">
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="center-circle"></div>
+                    </div>
+                </div>
+                <div class="info">8 pink petals</div>
+            </div>
+            
+            <!-- Spectrum -->
+            <div class="spinner-card">
+                <div class="spinner-title">Spectrum</div>
+                <div class="spinner-container">
+                    <div class="spinner spinner-rainbow">
+                        <div class="prism-ring"></div>
+                        <div class="prism-ring"></div>
+                        <div class="prism-ring"></div>
+                        <div class="prism-ring"></div>
+                        <div class="rainbow-center"></div>
+                    </div>
+                </div>
+                <div class="info">Full color spectrum</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

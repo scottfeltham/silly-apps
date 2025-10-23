@@ -47,3 +47,50 @@ pids
 
 # Optional eslint cache
 .eslintcache
+
+# Capacitor & Mobile Development
+node_modules/
+package-lock.json
+
+# iOS
+ios/App/Pods/
+ios/App/Podfile.lock
+ios/App/build/
+*.xcuserstate
+ios/App/App.xcworkspace/xcuserdata/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/app/release/
+android/app/debug/
+android/local.properties
+android/.idea/
+android/captures/
+*.apk
+*.aab
+
+# Capacitor
+.capacitor/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+fastlane/.env
+
+# Code Signing & Secrets
+*.keystore
+*.jks
+*.p12
+*.cer
+*.certSigningRequest
+*.mobileprovision
+service-account-key.json
+keystore.properties

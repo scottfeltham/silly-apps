@@ -1,0 +1,9 @@
+project: silly-apps
+version: 2.0.0
+created: '2025-10-21T15:50:01.579Z'
+phases:
+  - Focus
+  - Orchestrate
+  - Refine
+  - Generate
+  - Evaluate

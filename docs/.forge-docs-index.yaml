@@ -1,0 +1,19 @@
+updated: '2025-10-22T13:50:48.700Z'
+structure:
+  prd: 1
+  architecture: 0
+  api: 0
+  testing: 1
+  deployment: 0
+  security: 0
+  user-guides: 0
+  retrospectives: 0
+documents:
+  - type: prd
+    file: app-store-migration-native-ios-android-apps-prd.md
+    path: prd/app-store-migration-native-ios-android-apps-prd.md
+    modified: 2025-10-22T13:50:48.700Z
+  - type: testing
+    file: app-store-migration-native-ios-android-apps-test-scenarios.md
+    path: testing/app-store-migration-native-ios-android-apps-test-scenarios.md
+    modified: 2025-10-22T13:50:48.701Z
