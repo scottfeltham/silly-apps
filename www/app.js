@@ -598,32 +598,83 @@ const popCount = document.getElementById('popCount');
 const popReset = document.getElementById('popReset');
 let poppedBubbles = new Set();
 
-for (let i = 0; i < 48; i++) {
-    const bubble = document.createElement('div');
-    bubble.className = 'pop-bubble';
-    bubble.dataset.index = i;
-    bubble.addEventListener('click', () => {
-        bubble.classList.toggle('popped');
-        if (bubble.classList.contains('popped')) {
-            poppedBubbles.add(i);
-            // Pop haptic
-            haptics.pop();
-        } else {
-            poppedBubbles.delete(i);
-            // Un-pop haptic (lighter)
-            haptics.light();
-        }
-        popCount.textContent = poppedBubbles.size;
-        playSound(1000 + Math.random() * 200);
-    });
-    popGrid.appendChild(bubble);
+function createPopGrid() {
+    // Clear existing bubbles
+    popGrid.innerHTML = '';
+    poppedBubbles.clear();
+    popCount.textContent = '0';
+
+    // Calculate available space
+    const popScreen = document.getElementById('popit-screen');
+    if (!popScreen.classList.contains('active')) return; // Don't calculate if not visible
+
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
+
+    // Account for: title, counter, reset button, tab bar, padding
+    const reservedHeight = 200; // Approximate space for UI elements
+    const availableHeight = screenHeight - reservedHeight;
+    const availableWidth = Math.min(400, screenWidth * 0.9); // Match CSS max-width
+
+    // Bubble size + gap
+    const bubbleSize = 50;
+    const gap = 10;
+    const totalBubbleSize = bubbleSize + gap;
+
+    // Calculate how many fit
+    const cols = Math.floor(availableWidth / totalBubbleSize);
+    const rows = Math.floor(availableHeight / totalBubbleSize);
+    const totalBubbles = Math.max(cols * rows, 20); // Minimum 20 bubbles
+
+    // Create bubbles
+    for (let i = 0; i < totalBubbles; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'pop-bubble';
+        bubble.dataset.index = i;
+        bubble.addEventListener('click', () => {
+            bubble.classList.toggle('popped');
+            if (bubble.classList.contains('popped')) {
+                poppedBubbles.add(i);
+                // Pop haptic
+                haptics.pop();
+            } else {
+                poppedBubbles.delete(i);
+                // Un-pop haptic (lighter)
+                haptics.light();
+            }
+            popCount.textContent = poppedBubbles.size;
+            playSound(1000 + Math.random() * 200);
+        });
+        popGrid.appendChild(bubble);
+    }
 }
+
+// Initialize Pop It grid
+createPopGrid();
+
+// Recreate grid on window resize (debounced)
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const popScreen = document.getElementById('popit-screen');
+        if (popScreen.classList.contains('active')) {
+            createPopGrid();
+        }
+    }, 300);
+});
+
+// Recreate grid when Pop It screen becomes active
+const originalTabHandler = tabs[3]; // Pop It is 4th tab (index 3)
+tabs[3].addEventListener('click', () => {
+    setTimeout(createPopGrid, 100); // Small delay to let screen become visible
+});
 
 popReset.addEventListener('click', () => {
     document.querySelectorAll('.pop-bubble').forEach(b => b.classList.remove('popped'));
     poppedBubbles.clear();
     popCount.textContent = 0;
-    
+
     // Success haptic for reset
     haptics.success();
     playSound(600);
